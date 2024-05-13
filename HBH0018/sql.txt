@@ -1,0 +1,313 @@
+Question 1
+Show the subject names of books supplied by *supplier2*.
+
+SQL Query
+SELECT S.CategoryName
+FROM subject as S, book as B
+WHERE B.SupplierID = 2
+AND S.SubjectID = B.SubjectID;
+
+Query Results;
+| CategoryName |
+| category1 |
+| category2 |
+
+2 rows retrieved.
+
+Question 2
+Show the name and price of the most expensive book supplied by *supplier3*.
+SQL Query
+SELECT Title, MAX(UnitPrice)
+FROM book
+WHERE SupplierID = 3;
+
+Query Results;
+| Title | | MAX(UnitPrice) |
+| book1 | | 56.9 |
+
+1 rows retrieved.
+
+Question 3
+Show the unique names of all books ordered by *lastname1 firstname1*
+SQL Query
+SELECT DISTINCT Title
+FROM book as B, order_detail as OD, OrderID as OID
+WHERE OID.CustomerID = 1 and OID.OrderID = OD.OrderID and B.bookID = OD.bookID;
+
+Query Results;
+| Title |
+| book1 |
+| book4 |
+| book6 |
+| book7 |
+
+4 rows retrieved.
+
+Question 4
+Show the title of books which have more than 10 units in stock.
+SQL Query
+SELECT Title
+FROM book
+WHERE Quantity > 10;
+
+Query Results;
+| Title |
+| book4 |
+| book6 |
+| book7 |
+
+3 rows retrieved.
+
+Question 5
+Show the total price *lastname1 firstname1* has paid for the books.
+SQL Query
+SELECT sum(OD.Quantity*B.UnitPrice) as TotalPrice
+FROM customer as C, order_detail as OD, OrderID as OID, book as B
+WHERE C.CustomerID = OID.CustomerID and OID.OrderID = OD.OrderID and OD.BookID = B.BookID
+GROUP BY C.LastName, C.FirstName
+HAVING C.FirstName = 'firstname1';
+
+Query Results;
+| TotalPrice |
+| 266.96 |
+
+1 rows retrieved.
+
+Question 6
+Show the names of the customers who have paid less than $80 in totals.
+SQL Query
+SELECT C.FirstName, C.LastName
+FROM customer as C, order_detail as OD, OrderID as OID, book as B
+WHERE C.CustomerID = OID.CustomerID and OID.OrderID = OD.OrderID and OD.BookID = B.BookID
+GROUP BY C.LastName, C.FirstName
+HAVING sum(OD.Quantity*B.UnitPrice) < 80;
+
+Query Results;
+| FirstName | | LastName |
+| firstname2 | | lastname2 |
+| firstname3 | | lastname3 |
+
+2 rows retrieved.
+
+Question 7
+Show the name of books supplied by *supplier2*.
+SQL Query
+SELECT Title SELECT Title
+FROM book as B, supplier as S
+WHERE B.SupplierID = S.SupplierID and S.CompanyName = 'supplier2';
+
+Query Results;
+| Title |
+| book3 |
+| book5 |
+
+2 rows retrieved.
+
+Question 8
+Show the total price each customer paid and their names. List the result in descending price.
+SQL Query
+SELECT C.FirstName, C.LastName, sum(OD.Quantity*B.UnitPrice) as TotalPrice
+FROM customer as C, order_detail as OD, OrderID as OID, book as B
+WHERE C.CustomerID = OID.CustomerID and OID.OrderID = OD.OrderID and OD.BookID = B.BookID
+GROUP BY C.LastName, C.FirstName
+HAVING sum(OD.Quantity*B.UnitPrice) > 0
+ORDER By TotalPrice DESC;
+
+Query Results;
+| FirstName | | LastName | | TotalPrice |
+| firstname4 | | lastname4 | | 296.38 |
+| firstname1 | | lastname1 | | 266.96 |
+| firstname2 | | lastname2 | | 78.9 |
+| firstname3 | | lastname3 | | 12.34 |
+
+4 rows retrieved.
+
+Question 9
+Show the names of all the books shipped on 08/04/2016 and their shippers' names.
+SQL Query
+SELECT B.Title, SID.ShipperName
+FROM book as B, order_detail as OD, OrderID as OID, ShipperID as SID
+WHERE OID.ShippedDate = '8/4/2016' and OID.ShipperID = SID.ShipperID and OID.OrderID = OD.OrderID and OD.BookID = B.BookID;
+
+Query Results;
+| Title | | ShipperName |
+| book5 | | shipper2 |
+| book3 | | shipper1 |
+| book4 | | shipper1 |
+| book7 | | shipper1 |
+| book1 | | shipper1 |
+
+5 rows retrieved.
+
+Question 10
+Show the unique names of all the books *lastname1 firstname1* and *lastname4 firstname4* *both* ordered.
+SQL Query
+SELECT DISTINCT B.Title
+FROM book as B, order_detail as OD, OrderID as OID, customer as C
+WHERE B.BookID = OD.BookID and OD.OrderID = OID.OrderID and OID.CustomerID = 1
+and B.Title IN (SELECT B.Title
+FROM book as B2, order_detail as OD2, OrderID as OID2, customer as C2
+WHERE B2.BookID = OD2.BookID and OD2.OrderID = OID2.OrderID and OID2.CustomerID = 4 );
+
+Query Results;
+| Title |
+| book1 |
+| book4 |
+| book6 |
+| book7 |
+
+4 rows retrieved.
+
+Question 11
+Show the names of all the books *lastname6 firstname6* was responsible for.
+SQL Query
+SELECT DISTINCT B.Title
+FROM book as B, order_detail as OD, OrderID as OID, employee as E
+WHERE B.BookID = OD.BookID and OD.OrderID = OID.OrderID and OID.EmployeeID = 2
+ORDER BY B.BookID
+
+Query Results;
+| Title |
+| book1 |
+| book3 |
+| book4 |
+| book6 |
+| book7 |
+
+5 rows retrieved.
+
+Question 12
+Show the names of all the ordered books and their total quantities. List the result in ascending quantity.
+SQL Query
+SELECT B.Title, OD.Quantity
+FROM book as B, order_detail as OD
+WHERE B.BookID = OD.BookID
+ORDER BY OD.Quantity ASC;
+
+Query Results;
+| Title | | Quantity |
+| book1 | | 1 |
+| book4 | | 1 |
+| book1 | | 1 |
+| book5 | | 1 |
+| book4 | | 1 |
+| book7 | | 1 |
+| book1 | | 2 |
+| book1 | | 2 |
+| book6 | | 2 |
+| book3 | | 2 |
+| book7 | | 3 |
+
+11 rows retrieved.
+
+Question 13
+Show the names of the customers who ordered at least 2 books.
+SQL Query
+SELECT C.FirstName, C.LastName
+FROM order_detail as OD, OrderID as OID, customer as C
+WHERE OD.OrderID = OID.OrderID and OID.CustomerID = C.CustomerID
+GROUP BY C.CustomerID
+HAVING SUM(OD.Quantity) > 2;
+
+Query Results;
+| FirstName | | LastName |
+| firstname1 | | lastname1 |
+| firstname4 | | lastname4 |
+
+2 rows retrieved.
+
+Question 14
+Show the name of the customers who have ordered at least a book in *category3* or *category4* and the book names.
+SQL Query
+SELECT C.FirstName, C.LastName, B.Title
+FROM customer as C
+JOIN OrderID as OID on C.CustomerID = OID.CustomerID
+JOIN order_detail as OD on OD.OrderID = OID.OrderID
+JOIN book as B on OD.BookID = B.BookID
+JOIN subject as S on S.SubjectID = B.SubjectID
+WHERE S.SubjectID = 3 OR S.SubjectID = 4;
+
+Query Results;
+| FirstName | | LastName | | Title |
+| firstname1 | | lastname1 | | book6 |
+| firstname1 | | lastname1 | | book7 |
+| firstname4 | | lastname4 | | book7 |
+
+3 rows retrieved.
+
+Question 15
+Show the name of the customer who has ordered at least one book written by *author1*.
+SQL Query
+SELECT DISTINCT C.FirstName, C.LastName
+FROM customer as C, OrderID as OID, order_detail as OD, book as B
+WHERE C.CustomerID = OID.CustomerID and OID.OrderID = OD.OrderID and OD.BookID = B.BookID and B.Author = 'author1';
+
+Query Results;
+| FirstName | | LastName |
+| firstname1 | | lastname1 |
+| firstname4 | | lastname4 |
+| firstname3 | | lastname3 |
+
+3 rows retrieved.
+
+Question 16
+Show the name and total sale (price of orders) of each employee.
+SQL Query
+SELECT E.FirstName, E.LastName, sum(OD.Quantity*B.UnitPrice) as TotalPrice
+FROM employee as E, order_detail as OD, OrderID as OID, book as B
+WHERE E.EmployeeID = OID.EmployeeID and OID.OrderID = OD.OrderID and OD.BookID = B.BookID
+GROUP BY E.EmployeeID
+HAVING sum(OD.Quantity*B.UnitPrice) > 0
+ORDER By TotalPrice DESC;
+
+Query Results;
+| FirstName | | LastName | | TotalPrice |
+| firstname6 | | lastname6 | | 491.76 |
+| firstname5 | | lastname5 | | 162.82000000000002 |
+
+2 rows retrieved.
+
+Question 17
+Show the book names and their respective quantities for open orders (the orders which have not been shipped) at midnight 08/04/2016.
+SQL Query
+SELECT B.Title, OD.Quantity
+FROM book as B, order_detail as OD, OrderID as OID
+WHERE B.BookID = OD.BookID AND OD.OrderID = OID.OrderID AND OID.ShippedDate IS NULL;
+
+Query Results;
+| Title | | Quantity |
+| book6 | | 2 |
+| book7 | | 3 |
+
+2 rows retrieved.
+
+Question 18
+Show the names of customers who have ordered more than 1 book and the corresponding quantities. List the result in the descending quantity.
+SQL Query
+SELECT C.FirstName, C.LastName, OD.Quantity
+FROM customer as C, OrderID as OID, order_detail as OD, book as B
+WHERE C.CustomerID = OID.CustomerID AND OID.OrderID = OD.OrderID AND OD.BookID = B.BookID AND OD.Quantity > 1;
+
+Query Results;
+| FirstName | | LastName | | Quantity |
+| firstname1 | | lastname1 | | 2 |
+| firstname1 | | lastname1 | | 2 |
+| firstname1 | | lastname1 | | 3 |
+| firstname4 | | lastname4 | | 2 |
+| firstname4 | | lastname4 | | 2 |
+
+5 rows retrieved.
+
+Question 19
+Show the names of customers who have ordered more than 3 books and their respective telephone numbers
+SQL Query
+SELECT C.FirstName, C.LastName, C.Phone 
+FROM customer as C, OrderID as OID, order_detail as OD 
+WHERE (OD.Quantity) > 3 AND C.CustomerID = OID.CustomerID AND OID.OrderID = OD.OrderID;
+Query Results;
+| FirstName | | LastName | | Phone |
+| firstname1 | | lastname1 | | 334-001-001 |
+| firstname4 | | lastname4 | | 334-004-004 |
+
+2 rows retrieved.
+
